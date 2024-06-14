@@ -1,41 +1,45 @@
 const express = require('express');
 const maxmind = require('maxmind');
 const path = require('path');
+const geoip = require('geoip-lite'); // For getting client IP
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Load the MaxMind database
 const dbPath = path.join(__dirname, 'GeoLite2-Country.mmdb');
 let lookup;
 
-maxmind.open(dbPath)
-  .then(db => {
-    lookup = db;
-    console.log('MaxMind database loaded');
-  })
-  .catch(err => {
+maxmind.open(dbPath, (err, db) => {
+  if (err) {
     console.error('Error loading MaxMind database:', err);
-  });
-
-// Define the GeoIP endpoint
-app.get('/geoip/:ip', (req, res) => {
-  const ip = req.params.ip;
-  if (!lookup) {
-    return res.status(500).send({ error: 'GeoIP database not loaded yet' });
-  }
-
-  const result = lookup.get(ip);
-
-  if (result) {
-    res.send({
-      ip: ip,
-      country: result.country.names.en,
-      countryCode: result.country.iso_code
-    });
   } else {
-    res.status(404).send({ error: 'IP address not found in the database' });
+    lookup = db;
+    console.log('MaxMind database loaded successfully');
   }
+});
+
+// Middleware to get client IP address
+const getClientIp = (req) => {
+  return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+};
+
+// Root route handler
+app.get('/', (req, res) => {
+  // Get client IP
+  const clientIp = getClientIp(req);
+
+  // Use MaxMind database to get country information
+  const result = lookup.get(clientIp);
+
+  // Prepare response
+  let response = {
+    ip: clientIp,
+    country: result ? result.country.names.en : 'Unknown',
+    countryCode: result ? result.country.iso_code : 'Unknown'
+  };
+
+  res.json(response);
 });
 
 // Start the server

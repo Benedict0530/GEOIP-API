@@ -1,16 +1,13 @@
 {
   "name": "geoip-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "express": "^4.19.2",
-    "maxmind": "^4.3.20"
+    "express": "^4.17.1",
+    "geoip-lite": "^1.4.10",
+    "maxmind": "^2.6.0"
   }
 }
