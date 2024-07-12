@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
   // Prepare response
   let response = {
     ip: clientIp,
-    country: result ? result.country.names.en : 'Unknown',
+    game: result ? result.country.names.en : 'Unknown',
     countryCode: result ? result.country.iso_code : 'Unknown'
   };
 
