@@ -6,6 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "geoip-lite": "^1.4.10",
     "maxmind": "^2.6.0"

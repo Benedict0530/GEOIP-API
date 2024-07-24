@@ -1,6 +1,7 @@
 const express = require('express');
 const maxmind = require('maxmind');
 const path = require('path');
+const cors = require('cors'); // Import cors package
 const geoip = require('geoip-lite'); // For getting client IP
 
 const app = express();
@@ -24,6 +25,9 @@ const getClientIp = (req) => {
   return req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 };
 
+// Use CORS middleware
+app.use(cors());
+
 // Root route handler
 app.get('/', (req, res) => {
   // Get client IP
@@ -35,7 +39,7 @@ app.get('/', (req, res) => {
   // Prepare response
   let response = {
     ip: clientIp,
-    country: result ? result.country.names.en : 'Unknown',
+    game: result ? result.country.names.en : 'Unknown',
     countryCode: result ? result.country.iso_code : 'Unknown'
   };
 
